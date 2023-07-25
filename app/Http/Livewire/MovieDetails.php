@@ -1,15 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Livewire;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Livewire\Component;
+use Psy\Readline\Hoa\Console;
 
-class MovieController extends Controller
+class MovieDetails extends Component
 {
-    public function index()
-    {
-        // get popular movies
+    public $movieId;
+    public $movieTitle;
+
+    public $selectedMovieId;
+    public $selectedMovieName;
+
+    public function movieshow(){
+       $this->movieId = 1;
+    }
+    public function mount(){
+           // get popular movies
         $popularMovies = Http::withToken(config('services.tmdb.token'))
             ->get('https://api.themoviedb.org/3/movie/popular')
             ->json()['results'];
@@ -22,17 +31,11 @@ class MovieController extends Controller
         $genres = collect($genresMovies)->mapWithKeys(function($genre){
             return [$genre['id']=> $genre['name']];
         });
-        
- dump($popularMovies);
-        return view('app',
-                    [
-                        'popularMovies' => $popularMovies,
-                        'genres' => $genres,
-                    ]);
     }
 
-    public function show()
+    public function render()
     {
 
+        return view('livewire.movie-details');
     }
 }
